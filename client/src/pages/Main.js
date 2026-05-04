@@ -8,10 +8,10 @@ export default function Main() {
   const [mode, setMode] = useState("fuzzy");
   const [aiResponse, setAiResponse] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("idle");
   const [debounceTimer, setDebounceTimer] = useState(null);
   const [saving, setSaving] = useState(false);
-
-
+  const [saveVersion, setSaveVersion] = useState(0);
 useEffect(() => {
   if (!selectedNote?._id) return;
 
@@ -20,18 +20,28 @@ useEffect(() => {
   }
 
   const timer = setTimeout(async () => {
+    const currentVersion = saveVersion + 1;
+    setSaveVersion(currentVersion);
+
     try {
-      setSaving(true);
+      setSaveStatus("saving");
 
       await API.put(`/notes/${selectedNote._id}`, {
         title: selectedNote.title,
         content: selectedNote.content,
       });
 
-      setSaving(false);
+      // Only update if this is latest request
+      if (currentVersion === saveVersion + 1) {
+        setSaveStatus("saved");
+
+        setTimeout(() => {
+          setSaveStatus("idle");
+        }, 1000);
+      }
     } catch (err) {
       console.error("Auto-save failed", err);
-      setSaving(false);
+      setSaveStatus("idle");
     }
   }, 500);
 
@@ -82,9 +92,13 @@ useEffect(() => {
     if (!selectedNote) return;
 
     try {
+      setSaveStatus("saving");
       await API.put(`/notes/${selectedNote._id}`, selectedNote);
       alert("Saved manually");
       fetchNotes();
+      setSaveStatus("saving");
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 1000);
     } catch (err) {
       console.error("Update error:", err.response?.data || err.message);
       alert("Failed to save note");
@@ -247,8 +261,12 @@ useEffect(() => {
                 }
               />
 
-              {saving && (
+              {saveStatus === "saving" && (
                 <p className="text-xs text-gray-500 mb-2">Saving...</p>
+              )}
+
+              {saveStatus === "saved" && (
+                <p className="text-xs text-green-500 mb-2">Saved ✓</p>
               )}
 
               <div className="flex gap-2 mt-2">
