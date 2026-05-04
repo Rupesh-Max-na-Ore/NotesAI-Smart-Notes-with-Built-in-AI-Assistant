@@ -260,6 +260,37 @@ useEffect(() => {
                   })
                 }
               />
+              <input
+                className="border p-2 w-full mt-2"
+                placeholder="Tags (comma separated)"
+                value={selectedNote.tags?.join(", ") || ""}
+                onChange={(e) =>
+                  setSelectedNote({
+                    ...selectedNote,
+                    tags: e.target.value.split(",").map(t => t.trim()),
+                  })
+                }
+              />
+              <div className="flex gap-2 mt-2 flex-wrap">
+                {selectedNote.tags?.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="bg-blue-100 text-blue-700 px-2 py-1 text-xs rounded cursor-pointer"
+                    onClick={() => {
+                      setQuery(tag);
+                      searchNotes();
+                    }}
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+              {selectedNote.summary && (
+                <div className="mt-4 p-3 bg-gray-100 rounded">
+                  <h3 className="font-bold mb-1">Summary</h3>
+                  <p className="text-sm">{selectedNote.summary}</p>
+                </div>
+              )}
 
               {saveStatus === "saving" && (
                 <p className="text-xs text-gray-500 mb-2">Saving...</p>
@@ -277,13 +308,35 @@ useEffect(() => {
                   Save
                 </button>
 
-                <button
-                  onClick={() => setShowDeleteModal(true)}
-                  className="bg-red-500 text-white p-2 hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </div>
+              {/* ADDED THIS SUMMARIZE BUTTON */}
+              <button
+                onClick={async () => {
+                  try {
+                    const res = await API.post(
+                      `/llm/summarize-note/${selectedNote._id}`
+                    );
+
+                    setSelectedNote({
+                      ...selectedNote,
+                      summary: res.data.summary,
+                    });
+                  } catch (err) {
+                    console.error("Summarize error:", err.response?.data || err.message);
+                    alert("Failed to summarize");
+                  }
+                }}
+                className="bg-purple-500 text-white p-2 hover:bg-purple-600"
+              >
+                Summarize
+              </button>
+
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="bg-red-500 text-white p-2 hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
             </>
           ) : (
             <p className="text-gray-500">Select a note</p>
