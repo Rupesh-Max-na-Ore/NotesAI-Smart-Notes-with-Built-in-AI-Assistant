@@ -341,17 +341,11 @@ Ensures:
 # 👨‍💻 Author
 
 Rupesh Das
-Computer Science Researcher & Developer
+- Systems Thinker & Developer
 
 ---
 
-# 📄 License
-
-MIT License
-
----
-
-# ⭐ Final Note
+# ⭐ Final Note & Feedback
 
 This project demonstrates:
 
@@ -359,14 +353,10 @@ This project demonstrates:
 \text{Full-stack engineering} + \text{LLM integration} + \text{usable product design}
 ]
 
-—not just a CRUD app, but a **knowledge interaction system**.
+not just a CRUD app, but a **knowledge interaction system**. It is my aim to evolve it, and increase its usability, attractiveness and performance even more. It is a work in progress. 
+
+Please let me know if you have any suggestions. My contact info is present in the frontpage of my GitHub account.
 
 ---
 
-If you want, I can also generate:
 
-* 🔥 **Resume bullet points**
-* 🎤 **Viva explanation script**
-* 📊 **Architecture diagram (for PPT)**
-
-Just tell me 👍
