@@ -21,4 +21,5 @@ router.get("/summarize", authMiddleware, summarizeTextController);
 // query notes with LLM understanding
 router.post("/query-notes", authMiddleware, queryNotesController);
 
+
 module.exports = router;

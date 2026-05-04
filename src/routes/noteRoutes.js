@@ -1,19 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const authMiddleware = require("../middleware/authMiddleware");
+const auth = require("../middleware/authMiddleware");
 
 const {
   createNote,
   getNotes,
+  updateNote,
   searchNotes,
+  deleteNote
 } = require("../controllers/noteController");
 
-router.use(authMiddleware);
-
-router.post("/", createNote);
-router.get("/", getNotes);
-
-// supports both exact and loose search based on "mode" query param
-router.get("/search", searchNotes);
+// Protected routes
+router.post("/", auth, createNote);
+router.get("/", auth, getNotes);
+router.put("/:id", auth, updateNote);  
+router.get("/search", auth, searchNotes);
+router.delete("/:id", auth, deleteNote);
 
 module.exports = router;

@@ -1,23 +1,29 @@
 const jwt = require("jsonwebtoken");
 
-const authMiddleware = (req, res, next) => {
+module.exports = (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
+    if (!authHeader) {
       return res.status(401).json({ message: "No token provided" });
     }
+
+    const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || "secret"
     );
 
-    req.user = decoded; // attach userId
+    // ✅ Canonical form
+    req.user = decoded;
+
+    // ✅ Backward compatibility (important for your existing code)
+    req.userId = decoded.userId;
+
     next();
   } catch (err) {
+    console.error("Auth error:", err.message);
     return res.status(401).json({ message: "Invalid token" });
   }
 };
-
-module.exports = authMiddleware;
