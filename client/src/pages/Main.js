@@ -29,6 +29,8 @@ useEffect(() => {
       await API.put(`/notes/${selectedNote._id}`, {
         title: selectedNote.title,
         content: selectedNote.content,
+        tags: selectedNote.tags || [],
+        summary: selectedNote.summary || "",
       });
 
       // Only update if this is latest request
@@ -93,7 +95,12 @@ useEffect(() => {
 
     try {
       setSaveStatus("saving");
-      await API.put(`/notes/${selectedNote._id}`, selectedNote);
+      await API.put(`/notes/${selectedNote._id}`, {
+        title: selectedNote.title,
+        content: selectedNote.content,
+        tags: selectedNote.tags || [],
+        summary: selectedNote.summary || "",
+      });
       alert("Saved manually");
       fetchNotes();
       setSaveStatus("saving");
@@ -228,6 +235,14 @@ useEffect(() => {
               </div>
               <div className="text-sm text-gray-600 truncate">
                 {note.content}
+              </div>
+
+              <div className="flex gap-1 mt-1 flex-wrap">
+                {note.tags?.map((tag, i) => (
+                  <span key={i} className="text-xs text-blue-500">
+                    #{tag}
+                  </span>
+                ))}
               </div>
             </div>
           ))}
