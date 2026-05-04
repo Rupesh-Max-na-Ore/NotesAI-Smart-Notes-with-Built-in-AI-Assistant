@@ -8,6 +8,38 @@ export default function Main() {
   const [mode, setMode] = useState("fuzzy");
   const [aiResponse, setAiResponse] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [debounceTimer, setDebounceTimer] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+
+useEffect(() => {
+  if (!selectedNote?._id) return;
+
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
+  }
+
+  const timer = setTimeout(async () => {
+    try {
+      setSaving(true);
+
+      await API.put(`/notes/${selectedNote._id}`, {
+        title: selectedNote.title,
+        content: selectedNote.content,
+      });
+
+      setSaving(false);
+    } catch (err) {
+      console.error("Auto-save failed", err);
+      setSaving(false);
+    }
+  }, 500);
+
+  setDebounceTimer(timer);
+
+  return () => clearTimeout(timer);
+}, [selectedNote?.title, selectedNote?.content]);
+
 
   // =========================
   // LOAD NOTES
@@ -51,6 +83,7 @@ export default function Main() {
 
     try {
       await API.put(`/notes/${selectedNote._id}`, selectedNote);
+      alert("Saved manually");
       fetchNotes();
     } catch (err) {
       console.error("Update error:", err.response?.data || err.message);
@@ -213,6 +246,10 @@ export default function Main() {
                   })
                 }
               />
+
+              {saving && (
+                <p className="text-xs text-gray-500 mb-2">Saving...</p>
+              )}
 
               <div className="flex gap-2 mt-2">
                 <button
