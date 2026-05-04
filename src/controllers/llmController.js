@@ -65,3 +65,29 @@ exports.queryNotesController = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// 4. Summarize a single note
+exports.summarizeNote = async (req, res) => {
+  try {
+    const noteId = req.params.id;
+
+    const note = await Note.findOne({
+      _id: noteId,
+      userId: req.user.userId,
+    });
+
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    const summary = await summarizeText(note.content);
+
+    note.summary = summary;
+    await note.save();
+
+    res.json({ summary });
+  } catch (err) {
+    console.error("Summarize Note Error:", err);
+    res.status(500).json({ message: "Summarization failed" });
+  }
+};

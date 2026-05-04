@@ -5,6 +5,7 @@ const {
   summarizeUserNotes,
   summarizeTextController,
   queryNotesController,
+  summarizeNote
 } = require("../controllers/llmController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -21,5 +22,7 @@ router.get("/summarize", authMiddleware, summarizeTextController);
 // query notes with LLM understanding
 router.post("/query-notes", authMiddleware, queryNotesController);
 
+// summarize a single note by ID
+router.post("/summarize-note/:id", authMiddleware, summarizeNote);
 
 module.exports = router;
