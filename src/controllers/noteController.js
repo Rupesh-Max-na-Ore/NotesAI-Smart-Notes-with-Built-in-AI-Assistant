@@ -44,26 +44,37 @@ const searchNotes = async (req, res) => {
       return res.status(400).json({ message: "Query required" });
     }
 
-    let query;
+    let notes;
 
     if (mode === "exact") {
-      // exact phrase
-      query = {
-        userId: req.user.userId,
-        $text: { $search: `"${q}"` },
-      };
-    } else {
-      // loose match (default)
-      query = {
-        userId: req.user.userId,
-        $text: { $search: q },
-      };
-    }
+      // exact phrase match
+      const regex = new RegExp(`\\b${q}\\b`, "i");
 
-    const notes = await Note.find(query).sort({ score: { $meta: "textScore" } });
+      notes = await Note.find({
+        userId: req.userId,
+        $or: [
+          { title: regex },
+          { content: regex },
+          { tags: regex },
+        ],
+      });
+    } else {
+      // fuzzy / loose match
+      const words = q.split(" ").filter(Boolean);
+
+      notes = await Note.find({
+        userId: req.userId,
+        $or: [
+          { title: { $in: words.map(w => new RegExp(w, "i")) } },
+          { content: { $in: words.map(w => new RegExp(w, "i")) } },
+          { tags: { $in: words.map(w => new RegExp(w, "i")) } },
+        ],
+      });
+    }
 
     res.json(notes);
   } catch (err) {
+    console.error("Search error:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
