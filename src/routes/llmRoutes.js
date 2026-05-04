@@ -3,18 +3,22 @@ const router = express.Router();
 
 const {
   summarizeUserNotes,
-  summarizeTextController
+  summarizeTextController,
+  queryNotesController,
 } = require("../controllers/llmController");
 
 const authMiddleware = require("../middleware/authMiddleware");
 
-// 🔹 Existing: summarize user's stored notes
+// Existing: summarize user's stored notes
 router.get("/summarize-notes", authMiddleware, summarizeUserNotes);
 
-// 🔹 NEW: summarize arbitrary text (POST)
+// summarize arbitrary text (POST)
 router.post("/summarize", authMiddleware, summarizeTextController);
 
-// 🔹 Optional GET (for quick testing)
+// Optional GET (for quick testing)
 router.get("/summarize", authMiddleware, summarizeTextController);
+
+// query notes with LLM understanding
+router.post("/query-notes", authMiddleware, queryNotesController);
 
 module.exports = router;
