@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../api";
 
-export default function Main() {
+export default function Main({ setToken, theme, setTheme }) {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [query, setQuery] = useState("");
@@ -173,18 +173,52 @@ useEffect(() => {
 };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen bg-white text-black dark:bg-gray-900 dark:text-white sepia:bg-[#f4ecd8] sepia:text-[#5b4636]">
 
       {/* ================= HEADER ================= */}
+
       <div className="flex justify-between items-center px-4 py-2 border-b bg-gray-900 text-white">
+
         <h1 className="font-bold text-lg">Notes AI</h1>
 
-        <button
-          onClick={logout}
-          className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-3">
+
+          {/* THEME SWITCHER */}
+          <div className="flex gap-1 border rounded px-1 py-1 bg-gray-800">
+            <button
+              onClick={() => setTheme("light")}
+              className="px-2 py-1 text-sm hover:bg-gray-700 rounded"
+              title="Light"
+            >
+              ☀️
+            </button>
+
+            <button
+              onClick={() => setTheme("dark")}
+              className="px-2 py-1 text-sm hover:bg-gray-700 rounded"
+              title="Dark"
+            >
+              🌙
+            </button>
+
+            <button
+              onClick={() => setTheme("sepia")}
+              className="px-2 py-1 text-sm hover:bg-gray-700 rounded"
+              title="Sepia"
+            >
+              📜
+            </button>
+          </div>
+
+          {/* LOGOUT */}
+          <button
+            onClick={logout}
+            className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
+          >
+            Logout
+          </button>
+
+        </div>
       </div>
 
       {/* ================= MAIN LAYOUT ================= */}
