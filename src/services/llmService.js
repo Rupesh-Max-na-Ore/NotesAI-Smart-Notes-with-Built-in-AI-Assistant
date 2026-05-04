@@ -11,7 +11,7 @@ const client = new OpenAI({
 });
 
 
-// 🔹 1. Summarize user notes (existing, improved)
+// 1. Summarize user notes
 async function summarizeNotes(notes, userId) {
   const cacheKey = `summary:user:${userId}`;
 
@@ -49,7 +49,7 @@ ${content}
 }
 
 
-// 🔹 2. Summarize arbitrary text (NEW)
+// 2. Summarize arbitrary text 
 async function summarizeText(text) {
   const cacheKey = `summary:text:${Buffer.from(text).toString("base64").slice(0, 50)}`;
 
@@ -82,7 +82,38 @@ ${text}
   }
 }
 
+async function queryNotes(notes, query) {
+  try {
+    const content = notes.map(n => `- ${n.title}\n${n.content}`).join("\n");
+
+    const prompt = `
+You are an intelligent assistant.
+
+User Notes:
+${content}
+
+User Question:
+${query}
+
+Answer clearly based only on the notes.
+`;
+
+    const response = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.5,
+    });
+
+    return response.choices[0].message.content;
+
+  } catch (err) {
+    console.error("LLM Query Error:", err.message);
+    throw err;
+  }
+}
+
 module.exports = {
   summarizeNotes,
   summarizeText,
+  queryNotes,
 };
