@@ -7,6 +7,7 @@ export default function Main() {
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState("fuzzy");
   const [aiResponse, setAiResponse] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // =========================
   // LOAD NOTES
@@ -222,7 +223,7 @@ export default function Main() {
                 </button>
 
                 <button
-                  onClick={deleteNote}
+                  onClick={() => setShowDeleteModal(true)}
                   className="bg-red-500 text-white p-2 hover:bg-red-600"
                 >
                   Delete
@@ -256,6 +257,39 @@ export default function Main() {
             {aiResponse}
           </div>
         </div>
+        {showDeleteModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    
+    <div className="bg-white p-6 rounded shadow-lg w-80">
+      <h2 className="text-lg font-bold mb-3">Delete Note?</h2>
+      
+      <p className="text-sm text-gray-600 mb-4">
+        This action cannot be undone.
+      </p>
+
+      <div className="flex justify-end gap-2">
+        
+        <button
+          onClick={() => setShowDeleteModal(false)}
+          className="px-3 py-1 bg-gray-300 rounded"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={async () => {
+            await deleteNote();
+            setShowDeleteModal(false);
+          }}
+          className="px-3 py-1 bg-red-500 text-white rounded"
+        >
+          Delete "<b>{selectedNote?.title || "Untitled"}</b>"
+        </button>
+
+      </div>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );
