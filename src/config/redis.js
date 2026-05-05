@@ -1,21 +1,19 @@
 const Redis = require("ioredis");
 
-if (!process.env.REDIS_URL) {
-  console.log("Redis disabled");
+let redisClient = null;
+
+if (process.env.REDIS_URL) {
+  redisClient = new Redis(process.env.REDIS_URL);
+
+  redisClient.on("connect", () => {
+    console.log("Redis connected");
+  });
+
+  redisClient.on("error", (err) => {
+    console.error("Redis error:", err.message);
+  });
+} else {
+  console.log("⚠️ Redis disabled (no REDIS_URL)");
 }
 
-const redis = new Redis({
-  host: process.env.REDIS_HOST || "redis",
-  port: process.env.REDIS_PORT || 6379,
-});
-
-// Redis event listeners
-redis.on("connect", () => {
-  console.log("Redis connected");
-});
-
-redis.on("error", (err) => {
-  console.error("Redis error:", err.message);
-});
-
-module.exports = redis;
+module.exports = redisClient;
