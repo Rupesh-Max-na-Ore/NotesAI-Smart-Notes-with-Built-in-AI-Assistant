@@ -15,7 +15,12 @@ const client = new OpenAI({
 async function summarizeNotes(notes, userId) {
   const cacheKey = `summary:user:${userId}`;
 
-  const cached = await redisClient.get(cacheKey);
+  let cached = null;
+
+  if (redisClient) {
+    cached = await redisClient.get(cacheKey);
+  }
+
   if (cached) return cached;
 
   try {
@@ -38,7 +43,9 @@ ${content}
     const result = response.choices[0].message.content;
 
     // Cache for 1 hour
-    await redisClient.set(cacheKey, result, "EX", 3600);
+    if (redisClient) {
+      await redisClient.set(cacheKey, result, "EX", 3600);
+    }
 
     return result;
 
@@ -53,9 +60,13 @@ ${content}
 async function summarizeText(text) {
   const cacheKey = `summary:text:${Buffer.from(text).toString("base64").slice(0, 50)}`;
 
-  const cached = await redisClient.get(cacheKey);
-  if (cached) return cached;
+  let cached = null;
 
+  if (redisClient) {
+    cached = await redisClient.get(cacheKey);
+  }
+
+  if (cached) return cached;
   try {
     const prompt = `
 Summarize the following text concisely:
@@ -72,7 +83,9 @@ ${text}
     const result = response.choices[0].message.content;
 
     // Cache result
-    await redisClient.set(cacheKey, result, "EX", 3600);
+    if (redisClient) {
+      await redisClient.set(cacheKey, result, "EX", 3600);
+    }
 
     return result;
 
