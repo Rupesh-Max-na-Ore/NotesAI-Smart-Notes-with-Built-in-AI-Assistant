@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Use env variable (works in both dev + production)
 const API = axios.create({
-  baseURL: `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api`,
+  baseURL: `${process.env.REACT_APP_API_URL || "https://notesai-smart-notes-with-built-in-ai.onrender.com" || "http://localhost:5000"}/api`,
 });
 
 // Attach JWT token automatically
