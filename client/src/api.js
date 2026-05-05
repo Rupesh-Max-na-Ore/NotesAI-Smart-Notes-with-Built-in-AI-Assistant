@@ -1,9 +1,11 @@
 import axios from "axios";
 
+// Use env variable (works in both dev + production)
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api`,
 });
 
+// Attach JWT token automatically
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -12,14 +14,13 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-// 🔥 ADD THIS
+// Handle expired token
 API.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      // token expired or invalid
       localStorage.removeItem("token");
-      window.location.href = "/"; // redirect to login
+      window.location.href = "/";
     }
     return Promise.reject(err);
   }
