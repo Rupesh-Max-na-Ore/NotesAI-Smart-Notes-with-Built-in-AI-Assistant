@@ -8,7 +8,10 @@ const llmRoutes = require("./routes/llmRoutes");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "*", // quick for demo (later restrict)
+  credentials: true
+}));
 app.use(express.json());
 app.use(rateLimiter);
 
