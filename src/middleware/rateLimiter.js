@@ -2,18 +2,13 @@ const rateLimit = require("express-rate-limit");
 
 let limiter;
 
-if (process.env.NODE_ENV === "test") {
-  limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-  });
-} else {
+// Use Redis ONLY if explicitly configured
+if (process.env.REDIS_URL) {
   const { RedisStore } = require("rate-limit-redis");
   const Redis = require("ioredis");
 
-  const redisClient = new Redis({
-    host: process.env.REDIS_HOST || "127.0.0.1",
-    port: process.env.REDIS_PORT || 6379,
+  const redisClient = new Redis(process.env.REDIS_URL, {
+    maxRetriesPerRequest: 1,
   });
 
   limiter = rateLimit({
@@ -23,6 +18,17 @@ if (process.env.NODE_ENV === "test") {
     windowMs: 15 * 60 * 1000,
     max: 100,
   });
+
+  console.log("✅ Rate limiter using Redis");
+
+} else {
+  // Fallback: in-memory (safe for demo)
+  limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+  });
+
+  console.log("⚠️ Rate limiter using memory (no Redis)");
 }
 
 module.exports = limiter;
