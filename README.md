@@ -360,3 +360,101 @@ Please let me know if you have any suggestions. My contact info is present in th
 ---
 
 
+## 🚀 Deployment & Live Demo
+
+This project is deployed using **Render** with a split architecture:
+
+### 🧩 Architecture Overview
+
+[
+\text{Frontend (React)} \rightarrow \text{Backend API (Node.js + Express)} \rightarrow \text{MongoDB Atlas}
+]
+
+* **Frontend:** Hosted as a static site on Render
+* **Backend:** Hosted as a Node.js web service on Render
+* **Database:** MongoDB Atlas (cloud)
+
+---
+
+### 🌐 Live Demo
+
+👉 **Frontend (App UI):**
+https://notesai-smart-notes-with-built-in-ai-icq7.onrender.com
+
+👉 **Backend (API):**
+https://notesai-smart-notes-with-built-in-ai.onrender.com
+
+---
+
+### ⚙️ Deployment Details
+
+#### 🔹 Frontend (React)
+
+* Built using:
+
+  ```bash
+  npm run build
+  ```
+* Served as static files via Render
+* Uses environment variable:
+
+  ```env
+  REACT_APP_API_URL=https://notesai-smart-notes-with-built-in-ai.onrender.com
+  ```
+
+#### 🔹 Backend (Node.js + Express)
+
+* Runs using:
+
+  ```bash
+  node src/server.js
+  ```
+* Connected to MongoDB Atlas
+* Exposes REST API under:
+
+  ```
+  /api/*
+  ```
+
+---
+
+### ⚠️ Important Note
+
+The frontend communicates **only with the deployed backend URL**, not `localhost`.
+
+[
+\text{Incorrect: } localhost \quad \Rightarrow \quad \text{Blocked in production}
+]
+
+[
+\text{Correct: } \text{Public backend URL}
+]
+
+---
+
+### 🧪 Try It Yourself
+
+1. Open the frontend link
+2. Sign up with a new email
+3. Create notes, search, and use AI features
+
+---
+
+### 💡 Tip
+
+If the app appears slow initially, it may be due to Render’s **free tier cold start** (backend spins up on first request).
+
+---
+
+## 🎯 Summary
+
+This deployment demonstrates a complete full-stack pipeline:
+
+* Stateless frontend (React)
+* API-driven backend (Express)
+* Cloud database (MongoDB)
+* Production deployment (Render)
+
+---
+
+Enjoy exploring the app 🚀
